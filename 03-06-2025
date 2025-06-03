@@ -1,24 +1,24 @@
 #.1298. Maximum Candies You Can Get from Boxes.
 class Solution {
-    public int maxCandies(int[] status, int[] candies, int[][] keys, int[][] containedBoxes, int[] initialBoxes) {
-        boolean foundOpenable = true;
-        int totalCandies = 0;
-        for (int b : initialBoxes) initialBoxes.add(b);
-        while (!initialBoxes.isEmpty() && foundOpenable) {
-            foundOpenable = false;
-            List<Integer> nextBoxes = new ArrayList<>();
-            for (int boxId : initialBoxes) {
-                if (status[boxId] == 1) {
-                    foundOpenable = true;
-                    for (int nb : containedBoxes[boxId]) nextBoxes.add(nb);
-                    for (int keyId : keys[boxId]) status[keyId] = 1;
-                    totalCandies += candies[boxId];
-                } else {
-                    nextBoxes.add(boxId);
-                }
+    public int maxCandies(int[] boxStatus, int[] boxCandies, int[][] boxKeys, int[][] boxContents, int[] startBoxes) {
+        Queue<Integer> queue = new LinkedList<>();
+        for (int b : startBoxes)
+            queue.add(b);
+        int total = 0;
+        while (!queue.isEmpty()) {
+            int box = queue.remove();
+            if (boxStatus[box] == 0) {
+                if (queue.isEmpty())
+                    return total;
+                queue.add(box);
+            } else {
+                total += boxCandies[box];
+                for (int key : boxKeys[box])
+                    boxStatus[key] = 1;
+                for (int contained : boxContents[box])
+                    queue.add(contained);
             }
-            initialBoxes = nextBoxes;
         }
-        return totalCandies;
+        return total;
     }
 }
